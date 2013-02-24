@@ -2,6 +2,7 @@ import sbt._
 
 import Keys._
 import AndroidKeys._
+import AndroidNdkKeys._
 
 object General {
   val settings = Defaults.defaultSettings ++ Seq (
@@ -13,15 +14,23 @@ object General {
     javacOptions ++= Seq("-encoding", "UTF-8", "-source", "1.6", "-target", "1.6")
   )
 
-  val proguardSettings = Seq (
-    useProguard in Android := $useProguard$
+  lazy val proguardSettings = Seq (
+    useProguard in Android := $useProguard$,
+    proguardOptimizations += "-keep class $package$.** { *; }"
   )
+
+  lazy val ndkSettings = inConfig(Android) (Seq(
+    jniClasses := Seq(),
+    javahOutputFile := Some(new File("native.h"))
+  ))
 
   lazy val fullAndroidSettings =
     General.settings ++
     AndroidProject.androidSettings ++
+    AndroidNdk.settings ++
     TypedResources.settings ++
     proguardSettings ++
+    ndkSettings ++
     AndroidManifestGenerator.settings ++
     AndroidMarketPublish.settings ++ Seq (
       keyalias in Android := "change-me",
@@ -33,13 +42,14 @@ object AndroidBuild extends Build {
   lazy val main = Project (
     "$name$",
     file("."),
-    settings = General.fullAndroidSettings
+    settings = General.fullAndroidSettings ++ AndroidEclipse.settings
   )
 
   lazy val tests = Project (
     "tests",
     file("tests"),
     settings = General.settings ++
+               AndroidEclipse.settings ++
                AndroidTest.androidSettings ++
                General.proguardSettings ++ Seq (
       name := "$name$Tests"
