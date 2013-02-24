@@ -14,10 +14,10 @@ object General {
     javacOptions ++= Seq("-encoding", "UTF-8", "-source", "1.6", "-target", "1.6")
   )
 
-  lazy val proguardSettings = Seq (
-    useProguard in Android := $useProguard$,
+  lazy val proguardSettings = inConfig(Android) (Seq (
+    useProguard := $useProguard$,
     proguardOptimizations += "-keep class $package$.** { *; }"
-  )
+  ))
 
   lazy val ndkSettings = inConfig(Android) (Seq(
     jniClasses := Seq(),
@@ -40,7 +40,7 @@ object General {
 
 object AndroidBuild extends Build {
   lazy val main = Project (
-    "$name$",
+    "main",
     file("."),
     settings = General.fullAndroidSettings ++ AndroidEclipse.settings
   )
