@@ -1,11 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="$package$"
-    android:versionCode="1"
-    android:versionName="0.1">
-
-    <uses-sdk
-        android:minSdkVersion="$min_api_level$"
-        android:targetSdkVersion="$api_level$"/>
+    package="$package$">
 
     <application
         android:icon="@drawable/android:star_big_on"
@@ -19,4 +13,6 @@
             </intent-filter>
         </activity>
     </application>
+
+    <uses-sdk android:minSdkVersion="$api_level$"/>
 </manifest>
